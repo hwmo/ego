@@ -9,7 +9,7 @@ public class CountCharNum {
         String str = scanner.nextLine();
         String c = scanner.nextLine();
 
-
+        System.out.println("20220416");
         int count = 0;
 
         char[] chars = str.toCharArray();
