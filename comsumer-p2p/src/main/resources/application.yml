@@ -1,0 +1,31 @@
+server:
+  port: 8888
+#配置应用的名字
+spring:
+  application:
+    name: consumer-p2p
+
+    
+    
+    
+eureka:
+  client: 
+    register-with-eureka: false #是否将当前应用注册到注册中心
+    fetch-registry: false #当前项目是否到注册中心中拉去服务列表
+    #service-url:   #给Map集合属性中赋值
+      #defaultZone: http://localhost:1111/eureka
+      
+      
+#配置负载均衡策略
+  #orders-provider:
+    #ribbon:
+        # NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+ribbon:
+  eureka:
+    enabled: false
+ordersprovider:
+  ribbon:
+    listOfServers: http://localhost:4444,http://localhost:3333,http://localhost:2222
+      
+
+

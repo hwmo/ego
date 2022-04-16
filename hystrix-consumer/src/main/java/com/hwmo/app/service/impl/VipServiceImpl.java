@@ -1,0 +1,97 @@
+package com.hwmo.app.service.impl;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.hwmo.app.pojo.Orders;
+import com.hwmo.app.service.VipService;
+
+@Service
+public class VipServiceImpl implements VipService {
+
+	//Ribbon提供的负载均衡器
+	@Autowired
+	private LoadBalancerClient loadBalancerClient;
+	@Autowired
+	private RestTemplate restTemplate;
+	@Override
+	@HystrixCommand(defaultFallback = "fallBack01")
+	//用fallbackMethod指定时，fallBack01(Integer id)方法要定义参数，defaultFallback指定时,fallBack01()不需要方法不需要定义参数
+	public Orders loadVipOrdersService(Integer id) {
+		//通过制定需要调用的远程服务的名字获得服务实例对象
+		//si中封装了远程服务的ip，端口等信息
+		ServiceInstance si = loadBalancerClient.choose("ordersprovider");
+		//http://localhost:2222/orders/888
+		StringBuilder url=new StringBuilder();
+		url.append("http://").append(si.getHost());
+		url.append(":");
+		url.append(si.getPort());
+		url.append("/orders/").append(id);
+		
+		System.out.println("url========="+url.toString());
+		String url2 = "http://ordersprovider/orders/"+id;
+		//调用远程的服务
+		//Orders orders = restTemplate.getForObject(url.toString(), Orders.class);
+		//return orders;
+		return restTemplate.getForObject(url2.toString(), Orders.class);
+	}
+
+	@Override
+	@HystrixCommand(defaultFallback = "fallBack02")
+	public List<Orders> loadVipOrdersListService() {
+		ServiceInstance si = loadBalancerClient.choose("ordersprovider");
+		//http://localhost:2222/orders/888
+		StringBuilder url=new StringBuilder();
+		url.append("http://").append(si.getHost());
+		url.append(":");
+		url.append(si.getPort());
+		url.append("/orders");
+		System.out.println("url========="+url.toString());
+		String url2 = "http://ordersprovider/orders";
+		//调用远程的服务
+		Orders[] orders = restTemplate.getForObject(url2.toString(), Orders[].class);
+		if(orders != null){
+			return Arrays.asList(orders);
+		}else{
+			return null;
+		}
+
+	}
+
+	/**
+	 * 定义返回托底数据的方法，实现服务降级
+	 * @return
+	 */
+	public Orders fallBack01() {
+
+		Orders orders = new Orders();
+		orders.setId(-111);
+		orders.setRemark("服务器繁忙，请稍后再试！");
+		orders.setTotal(-22);
+		return orders;
+	}
+
+	/**
+	 * 定义返回托底数据的方法，实现服务降级
+	 * @return
+	 */
+	public List<Orders> fallBack02() {
+
+		Orders orders = new Orders();
+		orders.setId(-333);
+		orders.setRemark("服务器繁忙，请稍后再试！");
+		orders.setTotal(-444);
+
+		List<Orders> lst = new ArrayList<Orders>();
+		lst.add(orders);
+		return lst;
+	}
+}

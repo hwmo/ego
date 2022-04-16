@@ -1,0 +1,73 @@
+server:
+  port: 8888
+  compression:
+    enabled: true
+    min-response-size: 1024
+    mime-types:
+      - image/png
+      - image/jpeg
+      - image/jpg
+      - text/html
+      - application/javascript
+      - application/octet-stream
+      - application/json
+      - text/css
+
+
+
+#配置应用的名字
+spring:
+  application:
+    name: feign-consumer
+
+
+
+
+eureka:
+  client:
+    register-with-eureka: true #是否将当前应用注册到注册中心
+    fetch-registry: true #当前项目是否到注册中心中拉去服务列表
+    service-url:   #给Map集合属性中赋值
+      defaultZone: http://admin:admin@localhost:1111/eureka
+
+
+        #配置负载均衡策略
+        #orders-provider:
+        #ribbon:
+      # NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+
+
+
+
+
+
+
+feign:
+  compression:
+    request:
+      enabled: true
+      min-request-size: 2048
+      mime-types:
+        - image/png
+        - image/jpeg
+        - image/jpg
+        - text/html
+        - application/javascript
+        - application/octet-stream
+        - application/json
+        - text/css
+    response:
+      enabled: true
+  httpclient:
+    enabled: true
+  client:
+    config:
+      default:
+        connect-timeout: 3000
+        read-timeout: 5000
+      feign-orders-provider:
+        connect-timeout: 5000
+        read-timeout: 5000
+
+
+

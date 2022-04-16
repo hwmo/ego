@@ -1,0 +1,22 @@
+server:
+  port: 1111
+#配置应用的名字
+spring:
+  application:
+    name: eureka-server1
+    
+    
+    
+eureka:
+  instance:
+    hostname: eurekaserver1
+  client: 
+    register-with-eureka: true #是否将当前应用注册到注册中心
+    fetch-registry: true #当前项目是否到注册中心中拉去服务列表
+    service-url:   #给Map集合属性中赋值
+      defaultZone: http://eurekaserver2:2222/eureka,http://eurekaserver3:3333/eureka
+      
+      
+      
+
+
