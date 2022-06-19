@@ -10,10 +10,12 @@ public class HeapOutOfMemoryTest {
     }
 
     public static void main(String[] args) throws InterruptedException {
+        //下面代码执行久了抛Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
         List<A> list = new ArrayList<A>();
         while(true){
             list.add(new A());
-            Thread.sleep(1);
+            System.out.println("-------------------");
+//            Thread.sleep(1);
         }
     }
 }
