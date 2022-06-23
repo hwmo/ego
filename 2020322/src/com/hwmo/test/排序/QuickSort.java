@@ -12,6 +12,7 @@ public class QuickSort {
         for(int i : array){
             System.out.print(i + " ");
         }
+        System.out.println();
     }
 
     public static void quickSort(int[] array, int left, int right){
